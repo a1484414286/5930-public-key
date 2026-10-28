@@ -54,13 +54,24 @@ def main():
             for (x, y, w, h) in faces:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2) 
 
-            cv2.imshow('Face Detection', frame)
-            # cv2.imshow("original", frame)
-            encrypted_frame = process_encrypted_frame(frame=frame);
-            cv2.imshow("encrypted_frames", encrypted_frame);
+            cv2.imshow("original", frame)
             
-            decrypted_frame = process_decrypted_frame(encrypted_frame);
-            cv2.imshow("decrypted_frame", decrypted_frame); 
+            if(len(faces) > 0):
+                #shoow encrypted and decrypted frames if face is detected
+                face_frame = frame[y:y+h, x:x+w] #crop out the face region
+                encrypted_frame = process_encrypted_frame(face_frame); 
+                combined_frame = frame.copy() #make a copy of the original
+                combined_frame[y:y+h, x:x+w] = encrypted_frame #combine the matrix of the two
+                cv2.imshow("encrypted_frames", combined_frame);
+
+                decrypted_frame = process_decrypted_frame(encrypted_frame);
+                combined_decrypted_frame = frame.copy()
+                combined_decrypted_frame[y:y+h, x:x+w] = decrypted_frame
+                cv2.imshow("decrypted_frame", combined_decrypted_frame); 
+            else:
+                #show regular frame if no face is detected
+                cv2.imshow("encrypted_frames", frame);
+                cv2.imshow("decrypted_frame", frame);
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
