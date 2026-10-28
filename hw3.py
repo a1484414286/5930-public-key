@@ -14,35 +14,37 @@ def key_decryption():
     return None
 
 def process_encrypted_frame(frame):
-    #todo
-    return frame #pass down for display + decrypt
+    b = frame[:, :, 0]
+    g = frame[:, :, 1]
+    r = frame[:, :, 2]
+    # fill in the key_encryption here and pass down the values to the cv2.merge function
+    encrypted_frames = cv2.merge((b^0xFF, g^0xFF, r^0xFF)) #pass down for display + decrypt
+    return encrypted_frames
 
 def process_decrypted_frame(frame):
     #todo
-    return frame #pass down for display
+    b = frame[:, :, 0]
+    g = frame[:, :, 1]
+    r = frame[:, :, 2]
+    # fill in the key_decryption here and pass down the values to the cv2.merge function
+    decrypted_frames = cv2.merge((b^0xFF, g^0xFF, r^0xFF)) #pass down for display + decrypt
+    return decrypted_frames #pass down for display
 
 def main():
     try:
         while True:
-
             ret, frame = vid.read()
-
             if not ret:
                 print("Failed to capture frame. Check webcam connection.")
                 break
-
-            cv2.imshow("frame", frame)
-            cv2.imshow("frame", frame)
-            cv2.imshow("frame2", frame)
-            b = frame[:, :, 0] #2D arrays
-            g = frame[:, :, 1]
-            r = frame[:, :, 2]
-
-            # encrypted_frame = process_encrypted_frame(frame);
-            # cv2.imshow("encrypted_frame", encrypted_frame);
+            #Key gen should go here
+            cv2.imshow("original", frame)
+            encrypted_frame = process_encrypted_frame(frame=frame);
+            cv2.imshow("encrypted_frames", encrypted_frame);
             
-            # decrypted_frame = process_decrypted_frame(encrypted_frame);
-            # cv2.imshow("decrypted_frame", decrypted_frame); 
+            decrypted_frame = process_decrypted_frame(encrypted_frame);
+            cv2.imshow("decrypted_frame", decrypted_frame); 
+
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
